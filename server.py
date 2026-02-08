@@ -11,7 +11,7 @@ import logging
 from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse
 
-from mcp.server.mcpserver import MCPServer
+from mcp.server import Server
 from perplexity_client import get_client
 
 # Configure logging
@@ -22,7 +22,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Create MCP server instance
-mcp = MCPServer("perplexity-search")
+mcp = Server("perplexity-search")
 
 
 def validate_url(url: str) -> bool:
