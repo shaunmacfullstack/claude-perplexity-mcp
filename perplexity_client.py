@@ -375,6 +375,30 @@ class PerplexityClient:
                         }
                     )
 
+            # Replace [1], [2] etc. with inline markdown links
+            # This keeps citations inline and contextual where they were originally cited
+            for citation in citations:
+                index = citation.get("index")
+                url = citation.get("url", "")
+                title = citation.get("title", "").strip()
+                
+                if url and index:
+                    # Use title if available, otherwise extract domain from URL
+                    if title:
+                        link_text = title
+                    else:
+                        # Extract domain as fallback
+                        try:
+                            link_text = url.split("/")[2] if "/" in url else url
+                        except IndexError:
+                            link_text = url
+                    
+                    # Replace [1] with ([Title](URL)) inline
+                    answer = answer.replace(
+                        f"[{index}]",
+                        f"([{link_text}]({url}))"
+                    )
+
             # Build result
             result: Dict[str, Any] = {
                 "answer": answer,

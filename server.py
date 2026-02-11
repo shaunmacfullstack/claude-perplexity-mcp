@@ -123,9 +123,9 @@ async def perplexity_search(
     model: Optional[str] = None,
     search_focus: Optional[str] = None,
     recency: Optional[str] = None,
-) -> Dict[str, Any]:
+) -> str:
     """
-    Search Perplexity AI for current information and receive structured responses with citations.
+    Search Perplexity AI for current information and receive responses with inline citations.
 
     Args:
         query: The search question or query (required).
@@ -134,10 +134,8 @@ async def perplexity_search(
         recency: Time filter - "hour", "day", "week", "month", or "year" (optional).
 
     Returns:
-        Dict containing:
-        - answer: Main synthesized answer from Perplexity
-        - citations: List of citation objects with index, url, title, snippet
-        - metadata: Dict with model_used, query_time_ms, and optional search_focus
+        str: Formatted answer text with inline markdown citation links.
+        Citations appear inline as ([Title](URL)) where they were originally cited.
 
     Raises:
         ValueError: If parameters are invalid.
@@ -187,20 +185,19 @@ async def perplexity_search(
         citations = result.get("citations", [])
         sanitized_citations = sanitize_citations(citations)
 
-        # Build response
-        response: Dict[str, Any] = {
-            "answer": result.get("answer", ""),
-            "citations": sanitized_citations,
-            "metadata": result.get("metadata", {}),
-        }
+        # Get formatted answer text with inline markdown links
+        answer_text = result.get("answer", "")
 
+        # Return answer as plain string instead of dict
+        # This prevents Claude Desktop from paraphrasing/summarizing the response
+        # and ensures inline markdown links are preserved and displayed directly
         logger.info(
             f"Search completed successfully "
             f"(citations: {len(sanitized_citations)}, "
-            f"answer length: {len(response['answer'])} chars)"
+            f"answer length: {len(answer_text)} chars)"
         )
 
-        return response
+        return answer_text
 
     except ValueError as e:
         # Re-raise validation errors as-is (they're already safe)
