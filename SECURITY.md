@@ -2,7 +2,7 @@
 
 ## Reporting Security Issues
 
-If you discover a security vulnerability, please email [your-email] instead of using the issue tracker.
+If you discover a security vulnerability, please use the issue tracker.
 
 Please include:
 - Description of the vulnerability
